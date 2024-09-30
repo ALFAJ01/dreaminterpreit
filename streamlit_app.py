@@ -89,21 +89,23 @@ os.makedirs('.hidden_folder', exist_ok=True)  # Ensure the hidden folder exists
 if input_type == "Text":
     st.session_state.user_input = st.text_area("Describe your dream here...", placeholder="Type your dream description here...")
 else:
-    # Voice input using speech_recognition
-    if st.button("Record"):
-        recognizer = sr.Recognizer()
-        with sr.Microphone() as source:
-            st.write("Listening...")
-            audio_data = recognizer.listen(source)
-            st.write("Recognizing...")
-            try:
-                recognized_text = recognizer.recognize_google(audio_data)
-                st.session_state.user_input = recognized_text  # Store recognized text in session state
-                st.write(f"Recognized Text: {recognized_text}")
-            except sr.UnknownValueError:
-                st.write("Sorry, I could not understand your speech. Please try again.")
-            except sr.RequestError:
-                st.write("Could not request results from the speech service; check your network connection.")
+    st.warning("Voice input is not supported on Streamlit Cloud. Please use the text input option.")
+    st.session_state.user_input = st.text_area("Describe your dream here...", placeholder="Type your dream description here...")
+
+    # if st.button("Record"):
+    #     recognizer = sr.Recognizer()
+    #     with sr.Microphone() as source:
+    #         st.write("Listening...")
+    #         audio_data = recognizer.listen(source)
+    #         st.write("Recognizing...")
+    #         try:
+    #             recognized_text = recognizer.recognize_google(audio_data)
+    #             st.session_state.user_input = recognized_text  # Store recognized text in session state
+    #             st.write(f"Recognized Text: {recognized_text}")
+    #         except sr.UnknownValueError:
+    #             st.write("Sorry, I could not understand your speech. Please try again.")
+    #         except sr.RequestError:
+    #             st.write("Could not request results from the speech service; check your network connection.")
 
 # Submit Button
 if st.button("Submit Dream Description"):
