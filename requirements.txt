@@ -46,8 +46,7 @@ requests==2.32.3
 urllib3==2.2.3
 
 # Optional Dependencies (If Needed for Speech or Advanced Audio Processing)
-# Use these libraries only if you find alternatives that work without `portaudio`
-# SpeechRecognition==3.10.4
+SpeechRecognition==3.10.4  # Uncomment if using voice input
 
 # Git Handling Libraries
 gitdb==4.0.11
