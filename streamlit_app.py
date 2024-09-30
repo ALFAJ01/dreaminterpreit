@@ -50,6 +50,7 @@ st.markdown(
 )
 # Title
 st.markdown('<div class="title responsive-text">Dream Interpretation System 🌙</div>', unsafe_allow_html=True)
+st.markdown('<div class="title responsive-text">Supported All Language as a Input</div>', unsafe_allow_html=True)
 # #ASCII Art as a raw string literal
 # ascii_art = r"""
 # <pre style="text-align: center;">
@@ -59,8 +60,8 @@ st.markdown('<div class="title responsive-text">Dream Interpretation System 🌙
 
 # # Display ASCII art using Markdown with the <pre> tag
 # st.markdown(ascii_art, unsafe_allow_html=True)
-st.markdown('<div class="title responsive-text">Dream 🌀⠀</div>', unsafe_allow_html=True)
-st.markdown('<div class="title responsive-text">Model Trained By Ibn Sirin\'s Dictionary of Dreams</div>', unsafe_allow_html=True)
+st.markdown('<div class="title responsive-text">🌀 Dream 🌀⠀</div>', unsafe_allow_html=True)
+st.markdown('<div class="title responsive-text">Model Trained By Ibn Sirin\'s Dictionary of Dreams and others resource also.</div>', unsafe_allow_html=True)
 
 # Developer Information
 st.sidebar.markdown('<div class="sidebar-header">Developer Information</div>', unsafe_allow_html=True)
