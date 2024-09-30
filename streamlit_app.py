@@ -3,8 +3,10 @@ import joblib
 from googletrans import Translator
 from gtts import gTTS
 import os
-import speech_recognition as sr
 import smtplib
+import speech_recognition as sr
+from datetime import datetime
+import uuid
 
 # Load the trained model, label encoder, and TF-IDF vectorizer
 svm_model = joblib.load('model/dream_interpretation_model.pkl')
@@ -14,18 +16,26 @@ tfidf = joblib.load('model/tfidf_vectorizer.pkl')
 # Initialize the translator
 translator = Translator()
 
+# Function to save dream and interpretation to a session file
+def save_dream_to_file(dream, interpretation):
+    # Append the dream and interpretation to the session file
+    with open(session_file_path, 'a') as f:  # Use 'a' mode to append
+        f.write(f"TIMESTAMP: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+        f.write(f"DREAM DESCRIPTION:\n{dream}\n")
+        f.write(f"DREAM INTERPRETATION:\n{interpretation}\n\n")
+
 # Streamlit UI Setup
 st.set_page_config(page_title="Dream Interpretation System", page_icon="🌙")
 st.markdown(
     """
     <style>
     .stApp {
-        background-image: url('static/earth-planet.gif'); /* Ensure this path is correct */
-        background-size: cover; /* Ensures the background covers the entire element */
+        background-image: url('static/earth-planet.gif');
+        background-size: cover;
     }
     .title, .subheader, .sidebar-header {
         text-align: center;
-        white-space: nowrap; /* Prevent line break */
+        white-space: nowrap;
     }
     </style>
     """,
@@ -62,13 +72,24 @@ if st.sidebar.button("Submit Feedback"):
 
 # User Input Options: Text or Voice
 st.subheader("Enter your dream description:")
-input_type = st.radio("Choose input type:", ("Text", "Voice"), index=1)
+input_type = st.radio("Choose input type:", ("Text", "Voice"))
 
-user_input = ""
+# Hidden text input for storing voice input
+if "user_input" not in st.session_state:
+    st.session_state.user_input = ""
+
+# Create a unique session identifier
+if "session_id" not in st.session_state:
+    st.session_state.session_id = str(uuid.uuid4())  # Generate a unique session ID
+
+# Define session file path
+session_file_path = f".hidden_folder/dream_interpretations_{st.session_state.session_id}.txt"
+os.makedirs('.hidden_folder', exist_ok=True)  # Ensure the hidden folder exists
 
 if input_type == "Text":
-    user_input = st.text_area("Describe your dream here...", placeholder="Type your dream description here...")
+    st.session_state.user_input = st.text_area("Describe your dream here...", placeholder="Type your dream description here...")
 else:
+    # Voice input using speech_recognition
     if st.button("Record"):
         recognizer = sr.Recognizer()
         with sr.Microphone() as source:
@@ -76,8 +97,9 @@ else:
             audio_data = recognizer.listen(source)
             st.write("Recognizing...")
             try:
-                user_input = recognizer.recognize_google(audio_data)
-                st.write(f"Recognized Text: {user_input}")
+                recognized_text = recognizer.recognize_google(audio_data)
+                st.session_state.user_input = recognized_text  # Store recognized text in session state
+                st.write(f"Recognized Text: {recognized_text}")
             except sr.UnknownValueError:
                 st.write("Sorry, I could not understand your speech. Please try again.")
             except sr.RequestError:
@@ -85,8 +107,8 @@ else:
 
 # Submit Button
 if st.button("Submit Dream Description"):
+    user_input = st.session_state.user_input
     if user_input:
-        # Language Detection and Translation to English
         detected_lang = translator.detect(user_input).lang
         translated_input = translator.translate(user_input, src=detected_lang, dest='en').text
 
@@ -95,13 +117,16 @@ if st.button("Submit Dream Description"):
         predicted_label = label_encoder.inverse_transform(prediction)
 
         st.write(f"**Dream Interpretation (in English):** *{predicted_label[0]}*")
-        
+
         translated_interpretation = translator.translate(predicted_label[0], src='en', dest=detected_lang).text
         st.write(f"**Dream Interpretation (in Original Language - {detected_lang}):** *{translated_interpretation}*")
 
-        # Store the interpretation and detected language for read aloud
         st.session_state.translated_interpretation = translated_interpretation
-        st.session_state.detected_lang = detected_lang  # Store detected language
+        st.session_state.detected_lang = detected_lang
+
+        # Save dream description and interpretation to the session file
+        save_dream_to_file(user_input, translated_interpretation)
+
     else:
         st.warning("Please enter or record your dream description before submitting.")
 
