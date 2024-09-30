@@ -73,8 +73,33 @@ if st.sidebar.button("Submit Feedback"):
             st.sidebar.error("Failed to send feedback.")
 
 # User Input Options: Text Only (Removed Voice Input due to PyAudio issues)
-st.markdown('<div class="subheader">Enter your dream description</div>', unsafe_allow_html=True)
-user_input = st.text_area("Describe your dream here...")
+st.st.markdown('<div class="subheader">Enter your dream description</div>', unsafe_allow_html=True)
+user_input = st.text_area("Describe your dream here...", height=200)
+# Submit Button
+if st.button("Submit Dream Description"):
+    if user_input:
+        detected_lang = translator.detect(user_input).lang
+        st.write(f"Detected Language: {detected_lang}")
+
+        translated_input = translator.translate(user_input, src=detected_lang, dest='en').text
+        st.write(f"Translated Text: {translated_input}")
+
+        input_vector = tfidf.transform([translated_input]).toarray()
+        prediction = svm_model.predict(input_vector)
+        predicted_label = label_encoder.inverse_transform(prediction)
+
+        st.write(f"**Dream Interpretation (in English):** *{predicted_label[0]}*")
+
+        translated_interpretation = translator.translate(predicted_label[0], src='en', dest=detected_lang).text
+        st.write(f"**Dream Interpretation (in Original Language - {detected_lang}):** *{translated_interpretation}*")
+
+        if st.button("Read Aloud"):
+            tts = gTTS(translated_interpretation, lang=detected_lang)
+            tts.save("interpretation.mp3")
+            os.system("start interpretation.mp3")  # Use "start" for Windows, "open" for macOS, or "xdg-open" for Linux
+            st.audio("interpretation.mp3", format='audio/mp3')
+    else:
+        st.warning("Please enter your dream description before submitting.")
 
 # Language Detection and Translation to English
 if user_input:
