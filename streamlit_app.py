@@ -34,7 +34,7 @@ st.markdown(
 
 # Title
 st.markdown('<div class="title">Dream Interpretation System 🌙</div>', unsafe_allow_html=True)
-st.markdown('<div class="subheader">Model Trained By Ibn Sirin\'s Dictionary of Dreams Book and use some other resources also</div>', unsafe_allow_html=True)
+st.markdown('<div class="subheader">Model Trained By Ibn Sirin\'s Dictionary of Dreams</div>', unsafe_allow_html=True)
 
 # Developer Information
 st.sidebar.markdown('<div class="sidebar-header">Developer Information</div>', unsafe_allow_html=True)
@@ -88,7 +88,6 @@ if st.button("Submit Dream Description"):
     if user_input:
         # Language Detection and Translation to English
         detected_lang = translator.detect(user_input).lang
-
         translated_input = translator.translate(user_input, src=detected_lang, dest='en').text
 
         input_vector = tfidf.transform([translated_input]).toarray()
@@ -100,15 +99,16 @@ if st.button("Submit Dream Description"):
         translated_interpretation = translator.translate(predicted_label[0], src='en', dest=detected_lang).text
         st.write(f"**Dream Interpretation (in Original Language - {detected_lang}):** *{translated_interpretation}*")
 
-        # Store the interpretation for read aloud
+        # Store the interpretation and detected language for read aloud
         st.session_state.translated_interpretation = translated_interpretation
+        st.session_state.detected_lang = detected_lang  # Store detected language
     else:
         st.warning("Please enter or record your dream description before submitting.")
 
 # Read Aloud Functionality
-if 'translated_interpretation' in st.session_state:
+if 'translated_interpretation' in st.session_state and 'detected_lang' in st.session_state:
     if st.button("Read Aloud"):
-        tts = gTTS(st.session_state.translated_interpretation, lang=detected_lang)
+        tts = gTTS(st.session_state.translated_interpretation, lang=st.session_state.detected_lang)
         audio_file_path = "interpretation.mp3"
         tts.save(audio_file_path)
         st.audio(audio_file_path, format='audio/mp3')
