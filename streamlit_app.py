@@ -61,7 +61,7 @@ st.markdown('<div class="title responsive-text">Supported All Language as a Inpu
 # # Display ASCII art using Markdown with the <pre> tag
 # st.markdown(ascii_art, unsafe_allow_html=True)
 st.markdown('<div class="title responsive-text">🌀 Dream 🌀⠀</div>', unsafe_allow_html=True)
-st.markdown('<div class="title responsive-text">Model Trained By Ibn Sirin\'s Dictionary of Dreams and others resource also.</div>', unsafe_allow_html=True)
+st.markdown('<div class="title responsive-text">Model Trained By Ibn Sirin\'s Dictionary.</div>', unsafe_allow_html=True)
 
 # Developer Information
 st.sidebar.markdown('<div class="sidebar-header">Developer Information</div>', unsafe_allow_html=True)
