@@ -33,18 +33,33 @@ st.markdown(
         background-image: url('static/earth-planet.gif');
         background-size: cover;
     }
-    .title, .subheader, .sidebar-header {
+    .title, .sidebar-header {
         text-align: center;
         white-space: nowrap;
+    }
+    .subheader {
+        text-align: left;  /* Right align text */
+        white-space: nowrap;
+    }
+    .responsive-text {
+        font-size: calc(1em + 1vw);  /* Responsive font size */
     }
     </style>
     """,
     unsafe_allow_html=True
 )
-
 # Title
-st.markdown('<div class="title">Dream Interpretation System 🌙</div>', unsafe_allow_html=True)
-st.markdown('<div class="subheader">Model Trained By Ibn Sirin\'s Dictionary of Dreams</div>', unsafe_allow_html=True)
+st.markdown('<div class="title responsive-text">Dream Interpretation System 🌙</div>', unsafe_allow_html=True)
+#ASCII Art as a raw string literal
+ascii_art = r"""
+<pre style="text-align: center;">
+Dream 🌀⠀⠀⠀        
+        </pre>    
+"""
+
+# Display ASCII art using Markdown with the <pre> tag
+st.markdown(ascii_art, unsafe_allow_html=True)
+st.markdown('<div class="title responsive-text">Model Trained By Ibn Sirin\'s Dictionary of Dreams</div>', unsafe_allow_html=True)
 
 # Developer Information
 st.sidebar.markdown('<div class="sidebar-header">Developer Information</div>', unsafe_allow_html=True)
@@ -71,7 +86,7 @@ if st.sidebar.button("Submit Feedback"):
             st.sidebar.error("Failed to send feedback.")
 
 # User Input Options: Text or Voice
-st.subheader("Enter your dream description:")
+st.markdown('<div class="subheader responsive-text">Enter your dream description:</div>', unsafe_allow_html=True)
 input_type = st.radio("Choose input type:", ("Text", "Voice"))
 
 # Hidden text input for storing voice input
@@ -92,20 +107,20 @@ else:
     st.warning("Voice input is not supported on Streamlit Cloud. Please use the text input option.")
     st.session_state.user_input = st.text_area("Describe your dream here...", placeholder="Type your dream description here...")
 
-    if st.button("Record"):
-        recognizer = sr.Recognizer()
-        with sr.Microphone() as source:
-            st.write("Listening...")
-            audio_data = recognizer.listen(source)
-            st.write("Recognizing...")
-            try:
-                recognized_text = recognizer.recognize_google(audio_data)
-                st.session_state.user_input = recognized_text  # Store recognized text in session state
-                st.write(f"Recognized Text: {recognized_text}")
-            except sr.UnknownValueError:
-                st.write("Sorry, I could not understand your speech. Please try again.")
-            except sr.RequestError:
-                st.write("Could not request results from the speech service; check your network connection.")
+    # if st.button("Record"):
+    #     recognizer = sr.Recognizer()
+    #     with sr.Microphone() as source:
+    #         st.write("Listening...")
+    #         audio_data = recognizer.listen(source)
+    #         st.write("Recognizing...")
+    #         try:
+    #             recognized_text = recognizer.recognize_google(audio_data)
+    #             st.session_state.user_input = recognized_text  # Store recognized text in session state
+    #             st.write(f"Recognized Text: {recognized_text}")
+    #         except sr.UnknownValueError:
+    #             st.write("Sorry, I could not understand your speech. Please try again.")
+    #         except sr.RequestError:
+    #             st.write("Could not request results from the speech service; check your network connection.")
 
 # Submit Button
 if st.button("Submit Dream Description"):
