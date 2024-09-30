@@ -3,7 +3,6 @@ import joblib
 from googletrans import Translator
 from gtts import gTTS
 import os
-import speech_recognition as sr
 import smtplib
 
 # Load the trained model, label encoder, and TF-IDF vectorizer
@@ -73,29 +72,9 @@ if st.sidebar.button("Submit Feedback"):
         except Exception as e:
             st.sidebar.error("Failed to send feedback.")
 
-# User Input Options: Text or Voice
+# User Input Options: Text Only (Removed Voice Input due to PyAudio issues)
 st.markdown('<div class="subheader">Enter your dream description</div>', unsafe_allow_html=True)
-input_type = st.radio("Choose input type:", ("Text", "Voice"))
-
-user_input = ""
-
-if input_type == "Text":
-    user_input = st.text_area("Describe your dream here...")
-else:
-    st.write("Click the button below and speak your dream description.")
-    if st.button("Record"):
-        recognizer = sr.Recognizer()
-        with sr.Microphone() as source:
-            st.write("Listening...")
-            audio_data = recognizer.listen(source)
-            st.write("Recognizing...")
-            try:
-                user_input = recognizer.recognize_google(audio_data)
-                st.write(f"Recognized Text: {user_input}")
-            except sr.UnknownValueError:
-                st.write("Sorry, I could not understand your speech. Please try again.")
-            except sr.RequestError:
-                st.write("Could not request results from the speech service; check your network connection.")
+user_input = st.text_area("Describe your dream here...")
 
 # Language Detection and Translation to English
 if user_input:
